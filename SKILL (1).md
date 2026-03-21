@@ -74,17 +74,18 @@ Every fal.ai image generation call prepends this **root prompt** before any slid
 
 ```
 ROOT_PROMPT (prepend to every fal.ai call):
-"Cartoon muscular male character, bright cobalt blue skin and body, round head, 
-simple black dot eyes, small curved smile, dark athletic shorts, bold black outline, 
-flat vector illustration style, clean white background, no gradients, no shading, 
-no shadows, thick outlines, Blue Bro / forzic.bluebro aesthetic. 
+"Cartoon muscular male character, bright cobalt blue skin and body, round head,
+simple black dot eyes, small curved smile, dark athletic shorts, bold black outline,
+flat vector illustration style, clean white background, no gradients, no shading,
+no shadows, thick outlines, Blue Bro / forzic.bluebro aesthetic.
+Extremely muscular and jacked physique — massive biceps, defined abs, broad chest.
 Character must look visually identical to prior slides in this series."
 ```
 
-Then append the slide-specific action, e.g.:
-- `"Character is flexing both arms overhead, looking proud and energized."`
-- `"Character is lying down tanning, subtle glitter shimmer on blue skin, relaxed smile."`
-- `"Two versions of the character side by side: LEFT has puffy face, tired droopy eyes, dull look. RIGHT has sharp defined jawline, hollow cheeks, bright alert eyes. Label LEFT 'Before', label RIGHT 'After'."`
+Then append the slide-specific `imagePrompt`, e.g.:
+- `"Extremely muscular physique, both arms flexed overhead showing massive biceps, confident heroic stance, chest puffed out, defined abs visible, front-facing, powerful superhero pose."`
+- `"Extremely muscular physique lying back in relaxed pose, arms behind head showing massive biceps, content closed-eye smile, subtle golden shimmer sparkles on blue skin suggesting a healthy glow."`
+- `"Two versions of the character side by side. LEFT: same character but with puffy face, tired droopy eyes, dull skin, slouched posture, labeled 'Before'. RIGHT: sharp defined jawline, hollow cheeks, bright alert eyes, upright confident posture, labeled 'After'. Split composition, equal halves."`
 
 **Consistency protocol:** Generate slide 1 first. Save the output image URL. For slides 2–N, pass slide 1's URL as `image_url` (reference image) in the fal.ai call alongside the root prompt. This gives the model a visual anchor and is the strongest consistency lever available.
 
@@ -126,13 +127,13 @@ Then append the slide-specific action, e.g.:
 
 **Hook:** "Looks = +23%" / "4 easy hacks"
 
-| Slide | Headline | Body Text | Character Action | Dawnce? |
-|-------|----------|-----------|-----------------|---------|
-| 1 (Cover) | LOOKS = +23% | 4 easy hacks | Before/after side-by-side — puffy vs sharp face | No |
-| 2 | Face Yoga | Works jaw muscles, defines your angles over time | Dragging finger alongside jawline showing the angle | No |
-| 3 | Tan Enhancers | SPF daily + tanning oil on top. Glowing skin reads as healthier instantly | Lying down tanning, shimmer on skin | No |
-| 4 | Don't Snooze | Cortisol spikes from snoozing = inflammation, puffiness, bad skin. Try tools like Dawnce to actually get up. | Energized and awake, alarm dismissed on phone in hand | **Yes — soft** |
-| 5 (CTA) | Download Dawnce | Available on the App Store 📲 | Small casual dance move, relaxed | Yes |
+| Slide | Headline | Body Text | Image Prompt | Dawnce? |
+|-------|----------|-----------|--------------|---------|
+| 1 (Cover) | LOOKS = +23% | 4 easy hacks | `"Two versions of the character side by side. LEFT: same character but with puffy face, tired droopy eyes, dull skin, slouched posture, labeled 'Before'. RIGHT: sharp defined jawline, hollow cheeks, bright alert eyes, upright confident posture, labeled 'After'. Split composition, equal halves."` | No |
+| 2 | Face Yoga | Works jaw muscles, defines your angles over time | `"Extremely muscular jacked physique, massive arms, one hand raised with single finger tracing along a sharply defined jawline, looking sideways with proud smirk, front-facing upper body, strong angular jaw clearly visible, confidence pose."` | No |
+| 3 | Tan Enhancers | SPF daily + tanning oil on top. Glowing skin reads as healthier instantly | `"Extremely muscular physique lying back in relaxed pose, arms behind head showing massive biceps, content closed-eye smile, subtle golden shimmer sparkles on blue skin suggesting a healthy glow, relaxed chest-out pose."` | No |
+| 4 | Don't Snooze | Cortisol spikes from snoozing = inflammation, puffiness, bad skin. Try tools like Dawnce to actually get up. | `"Extremely muscular physique, arms slightly raised in energized victory pose, bright wide eyes and big smile, one hand holding phone with alarm dismissed on screen, radiating energy lines around character, awake and powerful stance."` | **Yes — soft** |
+| 5 (CTA) | Download Dawnce | Available on the App Store 📲 | `"Extremely muscular physique doing a casual celebratory dance move, one leg slightly raised, arms out in relaxed groove, big happy smile, energetic but chill vibe."` | Yes |
 
 **CTA copy rules — always App Store download, never follow/like:**
 - The CTA is always and only: download Dawnce on the App Store
@@ -246,13 +247,14 @@ One AI-generated image per slide. Text is overlaid after. Model: `fal-ai/gpt-ima
 const fal = require('@fal-ai/serverless-client');
 
 async function generateSlideImage(slide, referenceImageUrl = null) {
-  const ROOT = `Cartoon muscular male character, bright cobalt blue skin and body, round head, 
-simple black dot eyes, small curved smile, dark athletic shorts, bold black outline, 
-flat vector illustration style, clean white background, no gradients, no shading, 
-no shadows, thick outlines, Blue Bro / forzic.bluebro aesthetic. 
+  const ROOT = `Cartoon muscular male character, bright cobalt blue skin and body, round head,
+simple black dot eyes, small curved smile, dark athletic shorts, bold black outline,
+flat vector illustration style, clean white background, no gradients, no shading,
+no shadows, thick outlines, Blue Bro / forzic.bluebro aesthetic.
+Extremely muscular and jacked physique — massive biceps, defined abs, broad chest.
 Character must look visually identical to prior slides in this series.`;
 
-  const prompt = `${ROOT} ${slide.characterAction}`;
+  const prompt = `${ROOT} ${slide.imagePrompt}`;
 
   const result = await fal.run('fal-ai/gpt-image-1-5', {
     input: {
@@ -267,15 +269,19 @@ Character must look visually identical to prior slides in this series.`;
 }
 ```
 
-### Character Action Examples by Slide Type
+### Image Prompt Examples by Slide Type
 
-| Slide Type | `characterAction` |
-|------------|-------------------|
-| Before/after (cover) | `"Two versions side by side. LEFT: puffy face, tired droopy eyes, dull skin, labeled 'Before'. RIGHT: sharp jawline, hollow cheeks, bright alert eyes, labeled 'After'."` |
-| Jawline tip | `"Character dragging one finger along his jawline, slight proud smirk, showing off sharp jaw angle."` |
-| Tanning tip | `"Character lying back relaxing, eyes closed, content smile. Subtle glittering shimmer on blue skin suggesting a healthy tan."` |
-| Sleep/Dawnce tip | `"Character looking bright and energized, arms slightly raised, alarm shown as dismissed on phone in hand."` |
-| CTA | `"Character doing a small casual dance move, relaxed and happy energy."` |
+Each `imagePrompt` is a full, detailed description appended to the ROOT_PROMPT. It should specify physique detail, pose mechanics, expression, and any scene elements. The more specific, the more consistent the output.
+
+| Slide Type | `imagePrompt` |
+|------------|---------------|
+| Before/after (cover) | `"Two versions of the character side by side. LEFT: same character but with puffy face, tired droopy eyes, dull skin, slouched posture, labeled 'Before'. RIGHT: sharp defined jawline, hollow cheeks, bright alert eyes, upright confident posture, labeled 'After'. Split composition, equal halves."` |
+| Jawline tip | `"Extremely muscular jacked physique, massive arms, one hand raised with single finger tracing along a sharply defined jawline, looking sideways with proud smirk, front-facing upper body, strong angular jaw clearly visible, confidence pose."` |
+| Tanning tip | `"Extremely muscular physique lying back in relaxed pose, arms behind head showing massive biceps, content closed-eye smile, subtle golden shimmer sparkles on blue skin suggesting a healthy glow, relaxed chest-out pose."` |
+| Sleep/Dawnce tip | `"Extremely muscular physique, arms slightly raised in energized victory pose, bright wide eyes and big smile, one hand holding phone with alarm dismissed on screen, radiating energy lines around character, awake and powerful stance."` |
+| Fitness/body tip | `"Extremely muscular physique, both arms flexed overhead showing massive biceps, confident heroic stance, chest puffed out, defined abs visible, front-facing, powerful superhero pose."` |
+| Skincare tip | `"Extremely muscular physique, one hand gently touching face with relaxed satisfied expression, glowing healthy blue skin, front-facing upper body, subtle sparkle effects around face."` |
+| CTA | `"Extremely muscular physique doing a casual celebratory dance move, one leg slightly raised, arms out in relaxed groove, big happy smile, energetic but chill vibe."` |
 
 ### Consistency Protocol
 
@@ -295,9 +301,26 @@ Script: `scripts/overlay-text.js`
 
 ## Cron Job Setup
 
+**Install the cron job:**
 ```bash
-# 3x daily — 9:00 AM, 1:00 PM, 6:00 PM
-0 9,13,18 * * * cd ~/.openclaw/workspace && node skills/larry/scripts/tiktok-cron.js >> logs/tiktok-cron.log 2>&1
+bash setup-cron.sh
+```
+
+This runs 3x daily — 9:00 AM, 1:00 PM, 6:00 PM. It is idempotent (safe to run multiple times).
+
+**Verify it's installed:**
+```bash
+crontab -l | grep tiktok-cron
+```
+
+**Remove it:**
+```bash
+crontab -l | grep -v tiktok-cron | crontab -
+```
+
+**Raw cron line (for reference):**
+```
+0 9,13,18 * * * cd ~/.openclaw/workspace && node skills/larry/scripts/tiktok-cron.js >> ~/.openclaw/workspace/logs/tiktok-cron.log 2>&1
 ```
 
 ### Orchestrator: `scripts/tiktok-cron.js`
