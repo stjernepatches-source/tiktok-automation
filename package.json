@@ -1,0 +1,15 @@
+{
+  "name": "tiktok-automation",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test-run.js",
+    "start": "node scripts/tiktok-cron.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@fal-ai/client": "^1.3.0",
+    "@napi-rs/canvas": "^0.1.44",
+    "axios": "^1.6.0"
+  }
+}
