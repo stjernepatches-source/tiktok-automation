@@ -45,7 +45,7 @@ async function run(hook) {
   const postId = await postToTikTok(finalImageUrls, plan.caption, accountId);
 
   // Log the post
-  logPost({ hook, pillar: plan.pillar, slideCount: plan.slides.length, postId });
+  await logPost({ hook, pillar: plan.pillar, slideCount: plan.slides.length, postId });
 
   console.log(`\n=== Done ===`);
   console.log(`Post ID: ${postId}`);

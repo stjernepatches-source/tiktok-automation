@@ -18,13 +18,13 @@ BRAND RULES:
 IMAGE PROMPT STYLE — each slide needs a detailed imagePrompt like:
 "Extremely muscular jacked physique, massive arms, one hand raised with single finger tracing along a sharply defined jawline, looking sideways with proud smirk, front-facing upper body, strong angular jaw clearly visible, confidence pose."
 
-CONTENT PILLARS:
-- Face/appearance hacks
-- Glow-up routines
-- Sleep & skin science
-- Body/fitness appearance
+CONTENT PILLARS (use one of these exact values for the "pillar" field):
+- appearance_hacks
+- glow_up
+- sleep_skin
+- body_fitness
 
-OUTPUT FORMAT — respond with valid JSON only, no markdown:
+OUTPUT FORMAT — respond with valid JSON only, no markdown, no explanation:
 {
   "pillar": "appearance_hacks",
   "caption": "Caption text here 👀\\nDownload Dawnce on the App Store 📲\\n\\n#glowup #looksmaxxing #morningroutine #skincare #GenZ #dawnce #fyp",
@@ -57,8 +57,10 @@ Respond with valid JSON only. No markdown fences. No extra text.`
     system: SYSTEM_PROMPT
   });
 
-  const text = message.content[0].text.trim();
-  const plan = JSON.parse(text);
+  const raw = message.content[0].text.trim();
+  // Claude sometimes wraps JSON in markdown fences — strip them defensively
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  const plan = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
 
   // Validate structure
   if (!plan.slides || !Array.isArray(plan.slides)) {
