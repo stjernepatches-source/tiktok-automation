@@ -1,0 +1,8 @@
+node_modules/
+logs/
+tiktok-marketing/posts/
+tiktok-marketing/character-training/
+tiktok-marketing/analytics-log.json
+tiktok-marketing/instagram-draft.json
+tiktok-marketing/.last-post-id
+tiktok-marketing/config.json

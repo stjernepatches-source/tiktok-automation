@@ -1,0 +1,13 @@
+{
+  "fal_api_key": "YOUR_FAL_API_KEY",
+  "blotato_api_key": "YOUR_BLOTATO_API_KEY",
+  "tiktok_account_id": "YOUR_TIKTOK_ACCOUNT_ID",
+  "instagram_account_id": "YOUR_INSTAGRAM_ACCOUNT_ID",
+  "youtube_account_id": "YOUR_YOUTUBE_ACCOUNT_ID",
+  "fal_model": "fal-ai/flux/schnell",
+  "min_likes_threshold": 11000,
+  "character_lora_url": "",
+  "character_trigger_word": "GOKU",
+  "character_lora_trained": "",
+  "character_training_images": 0
+}
